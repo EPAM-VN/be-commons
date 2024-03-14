@@ -19,6 +19,13 @@
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <fmt.maven.plugin.version>2.22.1</fmt.maven.plugin.version>
     </properties>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Sephora Backend Common Utilities</name>
+            <url>https://maven.pkg.github.com/EPAM-VN/be-commons</url>
+        </repository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
