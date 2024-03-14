@@ -1,10 +1,13 @@
 package com.sephora.commons.exception.advice;
 
-
 import com.sephora.commons.constant.SephoraExceptionFrameworkConstant;
+import com.sephora.commons.exception.*;
 import com.sephora.commons.exception.dto.ExceptionResponse;
 import com.sephora.commons.exception.dto.SephoraError;
-import com.sephora.commons.exception.*;
+import java.nio.file.AccessDeniedException;
+import java.time.Instant;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -18,11 +21,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ServerWebInputException;
 
-import java.util.*;
-import java.nio.file.AccessDeniedException;
-import java.time.Instant;
-import java.util.stream.Collectors;
-
 @Order(Ordered.LOWEST_PRECEDENCE)
 @ControllerAdvice
 public class SephoraExceptionAdvice {
@@ -31,7 +29,8 @@ public class SephoraExceptionAdvice {
 
   @ExceptionHandler(SephoraValidationException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<ExceptionResponse> handleImValidationException(SephoraValidationException e) {
+  public ResponseEntity<ExceptionResponse> handleImValidationException(
+      SephoraValidationException e) {
     return handleSephoraException(e, HttpStatus.BAD_REQUEST);
   }
 
@@ -52,7 +51,8 @@ public class SephoraExceptionAdvice {
   @ResponseStatus(HttpStatus.FORBIDDEN)
   public ResponseEntity<ExceptionResponse> handleAccessDeniedException(AccessDeniedException e) {
     return handleSephoraException(
-        new SephoraForbiddenException(e, SephoraExceptionFrameworkConstant.ACCESS_DENIED_ERROR_CODE),
+        new SephoraForbiddenException(
+            e, SephoraExceptionFrameworkConstant.ACCESS_DENIED_ERROR_CODE),
         HttpStatus.FORBIDDEN);
   }
 
@@ -127,7 +127,8 @@ public class SephoraExceptionAdvice {
         HttpStatus.BAD_REQUEST);
   }
 
-  private ResponseEntity<ExceptionResponse> handleSephoraException(SephoraException e, HttpStatus status) {
+  private ResponseEntity<ExceptionResponse> handleSephoraException(
+      SephoraException e, HttpStatus status) {
     LOGGER.error(e.getMessage(), e);
     ExceptionResponse response =
         ExceptionResponse.builder()
@@ -148,7 +149,9 @@ public class SephoraExceptionAdvice {
     LOGGER.error(e.getMessage(), e);
     List<SephoraError> errors =
         e.getFieldErrors().stream()
-            .map(fieldError -> new SephoraError(fieldError.getField(), fieldError.getDefaultMessage()))
+            .map(
+                fieldError ->
+                    new SephoraError(fieldError.getField(), fieldError.getDefaultMessage()))
             .collect(Collectors.toList());
 
     ExceptionResponse response =
